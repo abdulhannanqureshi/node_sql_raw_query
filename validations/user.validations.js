@@ -37,8 +37,22 @@ const validateUserIdSchema = (req, res, next) => {
     next();
 };
 
+const validateUpdateUser = (req, res, next) => {
+    const { error } = Joi.object({
+        username: Joi.string(),
+        password: Joi.string(),
+        dob: Joi.string()
+    }).validate(req.body);
+
+    if (error) {
+        return res.status(400).json({ message: error.message, details: error.details });
+    }
+    next();
+};
+
 module.exports = {
     validateCreateUser,
     validateLoginSchema,
-    validateUserIdSchema
+    validateUserIdSchema,
+    validateUpdateUser
 }

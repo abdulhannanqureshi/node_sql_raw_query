@@ -16,6 +16,21 @@ app.use((err, req, res, next) => {
 
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/public'));
+
+// app.use((req, res, next) => {
+//   res.header('Access-Control-Allow-Origin', '*');
+//   res.header(
+//     'Access-Control-Allow-Headers',
+//     'Origin, X-Requested-With, Content-Type, Accept'
+//   );
+//   if (req.method == 'OPTIONS') {
+//     res.header('Access-Control-Allow-Methods', 'GET, POST, DELETE');
+//     return res.status(200).json({});
+//   }
+//   next();
+// });
+
 app.use('/v1', routes);
 
 const port = process.env.PORT || 3000;

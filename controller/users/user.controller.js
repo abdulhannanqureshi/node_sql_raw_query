@@ -13,7 +13,7 @@ const createUser = async (req, res) => {
         req.body.password = await bcryptjs.hash(req.body.password, 10);
         const newUser = await userModel.createUser(req.body);
         const userDetails = await userModel.selectUser(newUser.insertId);
-
+        delete userDetails[0].password;
         res.status(201).json({ success: true, message: resMessage.USER_CREATE, data: userDetails });
     } catch (error) {
         res.status(500).json({ success: false, message: resMessage.SERVER_ERROR, error: error.message });
@@ -70,13 +70,28 @@ const getUser = async (req, res) => {
 
 const updateUser = async (req, res) => {
     try {
-        await userModel.updateUser(req.params.id, req.body);
         const user = await userModel.selectUser(req.params.id);
-
         // 404 Not Found
         if (!user.length) return res.status(404).json({ success: false, message: resMessage.INVALID_ID });
+        console.log(req.file)
+        
+        await userModel.updateUser(req.params.id, req.body);
 
-        res.status(200).json({ success: true, message: resMessage.UPDATE_SUCC, data: userDetails });
+        res.status(200).json({ success: true, message: resMessage.UPDATE_SUCC });
+    } catch (error) {
+        res.status(500).json({ success: false, message: resMessage.UPDATE_FAILED, error: error.message });
+    }
+};
+
+const updateUserMulti = async (req, res) => {
+    try {
+        const user = await userModel.selectUser(req.params.id);
+        // 404 Not Found
+        if (!user.length) return res.status(404).json({ success: false, message: resMessage.INVALID_ID });
+        console.log(req.files)
+        await userModel.updateUser(req.params.id, req.body);
+
+        res.status(200).json({ success: true, message: resMessage.UPDATE_SUCC });
     } catch (error) {
         res.status(500).json({ success: false, message: resMessage.UPDATE_FAILED, error: error.message });
     }
@@ -84,12 +99,12 @@ const updateUser = async (req, res) => {
 
 const deleteUser = async (req, res) => {
     try {
-        const user = await userModel.deleteUser(req.params.id);
-
+        const user = await userModel.selectUser(req.params.id);
         // 404 Not Found
         if (!user.length) return res.status(404).json({ success: false, message: resMessage.INVALID_ID });
 
-        res.status(200).json({ success: true, message: resMessage.DELETE_SUCC, data: userList });
+        await userModel.deleteUser(req.params.id);
+        res.status(200).json({ success: true, message: resMessage.DELETE_SUCC });
     } catch (error) {
         res.status(500).json({ success: false, message: resMessage.DELETE_FAILED, error: error.message });
     }
@@ -101,5 +116,6 @@ module.exports = {
     getUser,
     updateUser,
     deleteUser,
-    loginUser
+    loginUser,
+    updateUserMulti
 }
