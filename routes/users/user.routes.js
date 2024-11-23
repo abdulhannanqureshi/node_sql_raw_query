@@ -2,7 +2,7 @@ const express = require('express');
 const routes = express.Router();
 const controller = require('../../controller/users/user.controller');
 const { verifyToken } = require('../../middleware/verify.token.middleware');
-const { uploadImage, uploadPDF } = require('../../middleware/upload.middleware');
+const { uploadImage } = require('../../middleware/upload.middleware');
 const { validateCreateUser, validateUserIdSchema, validateLoginSchema, validateUpdateUser } = require('../../validations/user.validations');
 
 routes.post('/create', validateCreateUser, controller.createUser);
